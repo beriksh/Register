@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+<?php
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "week12";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+?>
+
+<?php
+// Start the session
+session_start();
+?>
+
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>Sign-Up Form</title>
+    <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
+    
+        <!-- <link rel="stylesheet" href="style3.css"> -->
+
+        <style>
+        body{
+        background-image: url(1.png);}
+        </style>  
+
+    
+</head>
+ <div class="form">
+          <h1>Sign Up for Free</h1>
+          
+          <form action="register.php" method="POST">
+          
+              <label>
+                Username<span class="req">*</span>
+              </label>
+              <input type="text" name = "username" required autocomplete="off" />
+              <br>
+              <label>
+                Name<span class="req">*</span>
+              </label>
+              <input type="text" name="name" required autocomplete="off"/>
+              <br>
+            <label>
+              Email Address<span class="req">*</span>
+            </label>
+            <input type="email" name="email" required autocomplete="off"/>
+            <br>
+            <label>
+              Set A Password<span class="req">*</span>
+            </label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <label>
+              Confirm Password<span class="req">*</span>
+            </label>
+            <input type="password" name="confirm_password" id="confirm_password" required>
+          </div>
+
+          <p class="forgot"><a href="http://localhost/week12/log.php">Already a member?</a></p>
+          
+          <button type="submit"  name = "Submit" class="button button-block"/>Get Started</button>
+          
+          </form>
+
+        </div>
+</html>
+<?php
+session_start();
+include 'dbh.php';
+
+$email = $_POST['email2'];
+$password = $_POST['password2'];
+$password = md5($password);
+
+$sql = "SELECT * FROM week12 WHERE email='$email' AND  password =  '$password' ";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+// print_r ($row);
+if(!$row){
+	echo "wrong";
+	$_SESSION['cnt']++;
+	if($_SESSION['cnt']>=3){
+		$sql = "DELETE FROM week12 WHERE email='$email'";
+		$result = $conn->query($sql);
+		echo "block";
+	}
+}
+else{
+	// $_SESSION['id'] = $row['id'];
+	// $_SESSION['name'] = $row['username'];
+	echo "success";
+	$_SESSION['cnt'] = 0;
+}
+
+?>
+<?php
+// Start the session
+session_start();
+?>
+
+
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
+    <link href='http://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'>
+    
+
+
+    <style>
+    body{
+    background-image: url(1.png);
+    
+}
+
+
+</style>
+    
+  </head>
+
+  <body>
+
+    <div class="form">
+      
+      
+            <div id="login2">   
+          <h1 id="welcome_back" name="welcome_back">Welcome Back!</h1>
+          
+          <form action="login2.php"  method="POST">
+          
+       
+            <label>
+              Email Address<span class="req">*</span>
+            </label>
+            <input type="email" name="email2"  required autocomplete="off"/  >
+          </div>
+          
+       
+            <label>
+              Password<span class="req">*</span>
+            </label>
+            <input type="password" id="password2" name="password2" required>
+          </div>
+          
+          <p class="forgot"><a href="http://localhost/week12/registr.php">Don't have an accaunt?</a></p>
+          
+          <button type="submit" name="submit" class="button button-block"/>Log In</button>
+          
+          </form>
+
+        </div>
+        
+      
+      
+       
+
+
+
+  </body>
+</html>
+<?php
+session_start();
+include 'dbh.php';
+$_SESSION['cnt']=0;
+$username = $_POST['username'];
+$email = $_POST['email'];
+$password = $_POST['password'];
+$password = md5($password);
+
+$checkEmailsql = "SELECT email FROM week12 WHERE email = '$email'";
+$resultEmail = $conn->query($checkEmailsql);
+if(mysqli_num_rows($resultEmail) > 0 ) {
+    echo "This email is already being used";
+}
+if(($_POST["password"] != $_POST["confirm_password"])){
+    echo "Password wrong";
+}
+if(($_POST["password"] == $_POST["confirm_password"])) {
+    echo "good";
+    $sql = "INSERT INTO week12 (username, email, password) 
+    VALUES ('$username', '$email', '$password')";
+    $result = $conn->query($sql);
+}
+?>
+</body>
+</html>
+
